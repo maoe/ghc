@@ -105,6 +105,7 @@ char *EventDesc[] = {
   [EVENT_HEAP_PROF_SAMPLE_BEGIN]  = "Start of heap profile sample",
   [EVENT_HEAP_PROF_SAMPLE_STRING] = "Heap profile string sample",
   [EVENT_HEAP_PROF_SAMPLE_COST_CENTRE] = "Heap profile cost-centre sample",
+  [EVENT_USER_BINARY_MSG]     = "User binary message"
 };
 
 // Event type.
@@ -463,6 +464,10 @@ initEventLogging(const EventLogWriter *ev_writer)
             break;
 
         case EVENT_HEAP_PROF_SAMPLE_COST_CENTRE:
+            eventTypes[t].size = EVENT_SIZE_DYNAMIC;
+            break;
+
+        case EVENT_USER_BINARY_MSG:
             eventTypes[t].size = EVENT_SIZE_DYNAMIC;
             break;
 
@@ -1025,6 +1030,27 @@ void postCapMsg(Capability *cap, char *msg, va_list ap)
 void postUserEvent(Capability *cap, EventTypeNum type, char *msg)
 {
     const int size = strlen(msg);
+    EventsBuf *eb = &capEventBuf[cap->no];
+
+    if (!hasRoomForVariableEvent(eb, size)){
+        printAndClearEventBuf(eb);
+
+        if (!hasRoomForVariableEvent(eb, size)){
+            // Event size exceeds buffer size, bail out:
+            return;
+        }
+    }
+
+    postEventHeader(eb, type);
+    postPayloadSize(eb, size);
+    postBuf(eb, (StgWord8*) msg, size);
+}
+
+void postUserBinaryEvent(Capability   *cap,
+                         EventTypeNum  type,
+                         uint8_t      *msg,
+                         size_t        size)
+{
     EventsBuf *eb = &capEventBuf[cap->no];
 
     if (!hasRoomForVariableEvent(eb, size)){
