@@ -103,6 +103,13 @@ void initTracing (void)
     }
 }
 
+void flushTracing (void)
+{
+    if (eventlog_enabled) {
+        flushEventLog();
+    }
+}
+
 void endTracing (void)
 {
     if (eventlog_enabled) {

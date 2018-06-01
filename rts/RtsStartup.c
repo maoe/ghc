@@ -237,6 +237,9 @@ hs_init_ghc(int *argc, char **argv[], RtsConfig rts_config)
     /* Trace some basic information about the process */
     traceWallClockTime();
     traceOSProcessInfo();
+#if defined(TRACING)
+    flushTracing();
+#endif
 
     /* initialize the storage manager */
     initStorage();

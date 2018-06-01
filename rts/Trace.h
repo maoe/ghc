@@ -24,6 +24,7 @@
 #if defined(TRACING)
 
 void initTracing (void);
+void flushTracing (void);
 void endTracing  (void);
 void freeTracing (void);
 void resetTracing (void);
