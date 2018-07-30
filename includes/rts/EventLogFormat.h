@@ -260,4 +260,5 @@ typedef StgWord16 EventCapsetType;   /* types for EVENT_CAPSET_CREATE */
 typedef StgWord64 EventTaskId;         /* for EVENT_TASK_* */
 typedef StgWord64 EventKernelThreadId; /* for EVENT_TASK_CREATE */
 
+#define EVENT_PAYLOAD_SIZE_MAX STG_WORD16_MAX
 #endif
